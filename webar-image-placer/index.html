@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>WebAR 画像配置カメラ</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        overflow: hidden;
+        background: #000;
+      }
+      
+      #app {
+        position: relative;
+        width: 100vw;
+        height: 100vh;
+      }
+      
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+      
+      .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        padding: 20px;
+        background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);
+        color: white;
+        pointer-events: none;
+        z-index: 10;
+      }
+      
+      .controls {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        right: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        z-index: 10;
+      }
+      
+      .control-group {
+        background: rgba(255,255,255,0.9);
+        border-radius: 12px;
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .file-input-wrapper {
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+      }
+      
+      .file-input-wrapper input[type=file] {
+        position: absolute;
+        left: -9999px;
+      }
+      
+      .file-input-label {
+        display: block;
+        padding: 12px 20px;
+        background: #007AFF;
+        color: white;
+        border-radius: 8px;
+        cursor: pointer;
+        text-align: center;
+        font-weight: 500;
+        transition: background 0.2s;
+      }
+      
+      .file-input-label:hover {
+        background: #0056CC;
+      }
+      
+      .button {
+        padding: 12px 20px;
+        background: #34C759;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background 0.2s;
+      }
+      
+      .button:hover {
+        background: #28A745;
+      }
+      
+      .button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+      }
+      
+      .slider-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      
+      .slider {
+        flex: 1;
+        -webkit-appearance: none;
+        height: 4px;
+        border-radius: 2px;
+        background: #ddd;
+        outline: none;
+      }
+      
+      .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #007AFF;
+        cursor: pointer;
+      }
+      
+      .slider::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #007AFF;
+        cursor: pointer;
+      }
+      
+      .status {
+        position: absolute;
+        top: 60px;
+        left: 20px;
+        right: 20px;
+        background: rgba(0,0,0,0.8);
+        color: white;
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-size: 14px;
+        z-index: 10;
+      }
+      
+      .hidden {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="overlay">
+        <h1>WebAR 画像配置カメラ</h1>
+        <p>平面を検出し、タップして画像を配置</p>
+      </div>
+      
+      <div id="status" class="status hidden">
+        <p id="status-text">初期化中...</p>
+      </div>
+      
+      <div id="controls" class="controls hidden">
+        <div class="control-group">
+          <div class="file-input-wrapper">
+            <input type="file" id="image-input" accept="image/*" />
+            <label for="image-input" class="file-input-label">
+              画像を選択
+            </label>
+          </div>
+          
+          <div id="image-controls" class="hidden">
+            <div class="slider-group">
+              <label>サイズ:</label>
+              <input type="range" id="size-slider" class="slider" min="0.1" max="2" step="0.1" value="1" />
+              <span id="size-value">1.0</span>
+            </div>
+            
+            <div class="slider-group">
+              <label>回転:</label>
+              <input type="range" id="rotation-slider" class="slider" min="0" max="360" step="1" value="0" />
+              <span id="rotation-value">0°</span>
+            </div>
+            
+            <button id="clear-button" class="button">全画像を削除</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
