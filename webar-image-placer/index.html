@@ -17,6 +17,10 @@
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         overflow: hidden;
         background: #000;
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        width: 100vw;
       }
       
       #app {
@@ -32,7 +36,7 @@
       }
       
       .overlay {
-        position: absolute;
+        position: fixed;
         top: 0;
         left: 0;
         right: 0;
@@ -40,33 +44,81 @@
         background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);
         color: white;
         pointer-events: none;
-        z-index: 10;
+        z-index: 50;
+      }
+      
+      .overlay * {
+        pointer-events: none;
+      }
+      
+      .controls * {
+        pointer-events: auto;
+      }
+      
+      .status {
+        position: fixed;
+        top: 60px;
+        left: 20px;
+        right: 20px;
+        background: rgba(0,0,0,0.8);
+        color: white;
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-size: 14px;
+        z-index: 200;
+      }
+      
+      .start-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 300;
       }
       
       .controls {
-        position: absolute;
+        position: fixed;
         bottom: 20px;
         left: 20px;
         right: 20px;
         display: flex;
         flex-direction: column;
         gap: 10px;
-        z-index: 10;
+        z-index: 100;
+        pointer-events: auto;
       }
       
       .control-group {
-        background: rgba(255,255,255,0.9);
+        background: rgba(255,255,255,0.85);
         border-radius: 12px;
         padding: 15px;
         display: flex;
         flex-direction: column;
         gap: 10px;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(255,255,255,0.2);
+      }
+      
+      #image-controls {
+        background: rgba(255,255,255,0.75);
+        border-radius: 12px;
+        padding: 15px;
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        border: 1px solid rgba(255,255,255,0.15);
       }
       
       .file-input-wrapper {
         position: relative;
         overflow: hidden;
         display: inline-block;
+        width: 100%;
       }
       
       .file-input-wrapper input[type=file] {
@@ -110,6 +162,45 @@
         cursor: not-allowed;
       }
       
+      .restart-button {
+        background: #FF3B30;
+      }
+      
+      .restart-button:hover {
+        background: #D70015;
+      }
+      
+      .restart-button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+      }
+      
+      .place-button {
+        background: #007AFF;
+      }
+      
+      .place-button:hover {
+        background: #0056CC;
+      }
+      
+      .screenshot-button {
+        background: #FF9500;
+      }
+      
+      .screenshot-button:hover {
+        background: #E6850E;
+      }
+      
+      .button-group {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+      
+      .button-group .button {
+        flex: 1;
+      }
+      
       .slider-group {
         display: flex;
         align-items: center;
@@ -119,6 +210,7 @@
       .slider {
         flex: 1;
         -webkit-appearance: none;
+        appearance: none;
         height: 4px;
         border-radius: 2px;
         background: #ddd;
@@ -143,17 +235,186 @@
         cursor: pointer;
       }
       
-      .status {
-        position: absolute;
-        top: 60px;
-        left: 20px;
-        right: 20px;
-        background: rgba(0,0,0,0.8);
+      .start-content {
+        text-align: center;
         color: white;
-        padding: 10px 15px;
+        padding: 40px;
+        max-width: 400px;
+        margin: 0 auto;
+      }
+      
+      .start-content h2 {
+        font-size: 2.5em;
+        margin-bottom: 16px;
+        font-weight: 700;
+      }
+      
+      .start-content p {
+        font-size: 1.2em;
+        margin-bottom: 32px;
+        opacity: 0.9;
+      }
+      
+      .start-controls {
+        margin-bottom: 32px;
+      }
+      
+      .start-file-label {
+        background: rgba(255,255,255,0.2);
+        border: 2px solid rgba(255,255,255,0.3);
+        margin-bottom: 20px;
+      }
+      
+      .start-file-label:hover {
+        background: rgba(255,255,255,0.3);
+        border-color: rgba(255,255,255,0.5);
+      }
+      
+      #start-image-preview {
+        background: rgba(255,255,255,0.1);
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 20px;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+      }
+      
+      #preview-img {
+        max-width: 100%;
+        max-height: 150px;
         border-radius: 8px;
-        font-size: 14px;
-        z-index: 10;
+        margin-bottom: 15px;
+        object-fit: contain;
+      }
+      
+      .preview-controls {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .preview-controls .slider-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: white;
+      }
+      
+      .preview-controls .slider {
+        flex: 1;
+        -webkit-appearance: none;
+        appearance: none;
+        height: 4px;
+        border-radius: 2px;
+        background: rgba(255,255,255,0.3);
+        outline: none;
+      }
+      
+      .preview-controls .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #ffffff;
+        cursor: pointer;
+      }
+      
+      .preview-controls .slider::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #ffffff;
+        cursor: pointer;
+      }
+      
+      .start-button {
+        padding: 16px 32px;
+        background: #34C759;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 1.1em;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(52, 199, 89, 0.3);
+      }
+      
+      .start-button:hover {
+        background: #28A745;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(52, 199, 89, 0.4);
+      }
+      
+      .start-button:active {
+        transform: translateY(0);
+      }
+      
+      .screenshot-guide {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0,0,0,0.6);
+        color: #fff;
+        text-align: center;
+        z-index: 400;
+        pointer-events: none;
+        padding: 24px;
+      }
+      
+      .screenshot-guide .guide-text {
+        font-size: 18px;
+        line-height: 1.6;
+        max-width: 90vw;
+        opacity: 0.95;
+      }
+      
+      .screenshot-guide .countdown {
+        margin-top: 12px;
+        font-size: 64px;
+        font-weight: 800;
+        letter-spacing: 1px;
+      }
+
+      @media (max-width: 768px) {
+        .controls {
+          bottom: env(safe-area-inset-bottom, 10px);
+          left: env(safe-area-inset-left, 10px);
+          right: env(safe-area-inset-right, 10px);
+        }
+        
+        .control-group {
+          padding: 12px;
+          padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+        }
+        
+        .file-input-label {
+          padding: 14px 20px;
+          font-size: 16px;
+        }
+        
+        .slider-group {
+          font-size: 14px;
+        }
+        
+        .button {
+          padding: 14px 20px;
+          font-size: 16px;
+        }
+        
+        .overlay {
+          padding: calc(20px + env(safe-area-inset-top, 0px)) 20px 20px;
+        }
+        
+        .status {
+          top: calc(60px + env(safe-area-inset-top, 0px));
+          left: env(safe-area-inset-left, 20px);
+          right: env(safe-area-inset-right, 20px);
+        }
       }
       
       .hidden {
@@ -163,13 +424,57 @@
   </head>
   <body>
     <div id="app">
-      <div class="overlay">
+      <div class="overlay hidden">
         <h1>WebAR 画像配置カメラ</h1>
         <p>平面を検出し、タップして画像を配置</p>
       </div>
       
       <div id="status" class="status hidden">
         <p id="status-text">初期化中...</p>
+      </div>
+      
+      <!-- スクショガイドオーバーレイ -->
+      <div id="screenshot-guide" class="screenshot-guide hidden">
+        <div class="guide-text">
+          3秒後にUIを非表示にします。<br/>
+          音量↓ + 電源ボタンでスクリーンショットを撮影してください。
+        </div>
+        <div id="screenshot-countdown" class="countdown">3</div>
+      </div>
+      
+      <div id="start-screen" class="start-screen">
+        <div class="start-content">
+          <h2>WebAR 画像配置カメラ</h2>
+          <p>平面を検出し、タップして画像を配置</p>
+          
+          <div class="start-controls">
+            <div class="file-input-wrapper">
+              <input type="file" id="start-image-input" accept="image/*" />
+              <label for="start-image-input" class="file-input-label start-file-label">
+                画像を選択
+              </label>
+            </div>
+            
+            <div id="start-image-preview" class="hidden">
+              <img id="preview-img" src="" alt="選択した画像" />
+              <div class="preview-controls">
+                <div class="slider-group">
+                  <label>サイズ:</label>
+                  <input type="range" id="start-size-slider" class="slider" min="0.1" max="2" step="0.1" value="1" />
+                  <span id="start-size-value">1.0</span>
+                </div>
+                
+                <div class="slider-group">
+                  <label>回転:</label>
+                  <input type="range" id="start-rotation-slider" class="slider" min="0" max="360" step="1" value="0" />
+                  <span id="start-rotation-value">0°</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <button id="start-ar-button" class="start-button">ARを開始</button>
+        </div>
       </div>
       
       <div id="controls" class="controls hidden">
@@ -181,21 +486,28 @@
             </label>
           </div>
           
-          <div id="image-controls" class="hidden">
-            <div class="slider-group">
-              <label>サイズ:</label>
-              <input type="range" id="size-slider" class="slider" min="0.1" max="2" step="0.1" value="1" />
-              <span id="size-value">1.0</span>
-            </div>
-            
-            <div class="slider-group">
-              <label>回転:</label>
-              <input type="range" id="rotation-slider" class="slider" min="0" max="360" step="1" value="0" />
-              <span id="rotation-value">0°</span>
-            </div>
-            
-            <button id="clear-button" class="button">全画像を削除</button>
+          <button id="restart-camera-button" class="button restart-button">カメラ再起動</button>
+        </div>
+        
+        <div id="image-controls" class="hidden">
+          <div class="slider-group">
+            <label>サイズ:</label>
+            <input type="range" id="size-slider" class="slider" min="0.1" max="2" step="0.1" value="1" />
+            <span id="size-value">1.0</span>
           </div>
+          
+          <div class="slider-group">
+            <label>回転:</label>
+            <input type="range" id="rotation-slider" class="slider" min="0" max="360" step="1" value="0" />
+            <span id="rotation-value">0°</span>
+          </div>
+          
+          <div class="button-group">
+            <button id="place-button" class="button place-button">画像を設置</button>
+            <button id="screenshot-button" class="button screenshot-button">スクショガイド</button>
+          </div>
+          
+          <button id="clear-button" class="button">全画像を削除</button>
         </div>
       </div>
     </div>

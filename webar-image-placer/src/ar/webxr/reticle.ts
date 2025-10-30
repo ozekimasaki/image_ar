@@ -39,22 +39,27 @@ export class Reticle {
     this.mesh.quaternion.copy(rotation);
   }
 
-  public updateFromHitTest(hitTestResult: XRHitTestResult): void {
-    const pose = hitTestResult.getPose(this.mesh.parent as XRSpace);
-    if (pose) {
-      this.setPosition(new THREE.Vector3(
-        pose.transform.position.x,
-        pose.transform.position.y,
-        pose.transform.position.z
-      ));
-      this.setRotation(new THREE.Quaternion(
-        pose.transform.orientation.x,
-        pose.transform.orientation.y,
-        pose.transform.orientation.z,
-        pose.transform.orientation.w
-      ));
-      this.setVisible(true);
-    } else {
+  public updateFromHitTest(hitTestResult: XRHitTestResult, referenceSpace: XRReferenceSpace): void {
+    try {
+      const pose = hitTestResult.getPose(referenceSpace);
+      if (pose) {
+        this.setPosition(new THREE.Vector3(
+          pose.transform.position.x,
+          pose.transform.position.y,
+          pose.transform.position.z
+        ));
+        this.setRotation(new THREE.Quaternion(
+          pose.transform.orientation.x,
+          pose.transform.orientation.y,
+          pose.transform.orientation.z,
+          pose.transform.orientation.w
+        ));
+        this.setVisible(true);
+      } else {
+        this.setVisible(false);
+      }
+    } catch (error) {
+      console.error('レティクル更新エラー:', error);
       this.setVisible(false);
     }
   }
